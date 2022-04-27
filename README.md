@@ -93,13 +93,13 @@ To list all ```Users``` with attributes from the domain,
 To list attributes of ```Specific Users``` from the domain,
 
 ```c
-.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command users -name servicesadmin
+.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command users -name <user>
 ```
 
 To list the membership of the Specific User,
 
 ```c
-.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command users -name servicesadmin -filter membership
+.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command users -name <user> -filter membership
 ```
 
 To list all available ```Computers``` from the domain,
@@ -117,7 +117,7 @@ To list all ```Computers``` with attributes from the domain,
 To list attributes of ```Specific Computer``` from the domain,
 
 ```c
-.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command computers -name servicesadmin
+.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command computers -name <computer name>
 ```
 
 To list all available ```Groups``` from the domain,
@@ -135,13 +135,13 @@ To list all ```Groups``` with attributes from the domain,
 To list attributes of ```Specific Group``` from the domain,
 
 ```c
-.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command groups -name servicesadmin
+.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command groups -name <group name>
 ```
 
 To list members of ```Specific Group``` from the domain,
 
 ```c
-.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command groups -name servicesadmin -filter membership
+.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command groups -name <group name> -filter membership
 ```
 
 To list users ```Never Logged On``` from the domain,
@@ -183,7 +183,7 @@ To list all attributes of ```MS-SQL Servers``` from the domain,
 To list all attributes of specific ```MS-SQL Server``` from the domain,
 
 ```c
-.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command ms-sql -name ufc-sqldev 
+.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command ms-sql -name <computer name> 
 ```
 
 To list ```SPNs``` available in the domain,
@@ -195,7 +195,7 @@ To list ```SPNs``` available in the domain,
 To list all attributes of ```Specific SPN``` from the domain,
 
 ```c
-.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command spn -name dbservice
+.\ADReaper.exe -dc <dc.domain> -user <username> -password <password> -command spn -name <sam of spn>
 ```
 
 To list AD objects with ```Unconstrained Delegation``` enabled,
