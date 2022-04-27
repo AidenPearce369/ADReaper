@@ -2,6 +2,7 @@ package ldapquery
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"gopkg.in/ldap.v2"
@@ -42,17 +43,17 @@ func LDAPauth(
 	loginUsername string,
 	loginPassword string,
 ) error {
-	result, err := conn.Search(ldap.NewSearchRequest(
+	result, err := conn.SearchWithPaging(ldap.NewSearchRequest(
 		baseDN,
 		ldap.ScopeWholeSubtree,
 		ldap.NeverDerefAliases,
-		0,
+		math.MaxInt32,
 		0,
 		false,
 		LDAPfilter(loginUsername, filterDN),
 		[]string{"dn"},
 		nil,
-	))
+	), math.MaxInt32)
 
 	fmt.Print(result.Entries)
 	fmt.Print("Entries : ")
@@ -85,13 +86,15 @@ func LDAPlistquery(
 	ldapPassword string,
 	baseDN string,
 	command string,
+	filter string,
+	name string,
 ) {
 	conn, err := LDAPconnect(ldapServer, ldapBind, ldapPassword)
 	if err != nil {
 		fmt.Printf("Failed to connect the LDAP server. %s", err)
 		return
 	}
-	if err := LDAP_QueryData(conn, baseDN, command); err != nil {
+	if err := LDAP_QueryData(conn, baseDN, command, filter, name); err != nil {
 		fmt.Printf("%v", err)
 		return
 	}

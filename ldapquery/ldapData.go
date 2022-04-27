@@ -1,33 +1,19 @@
 package ldapquery
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"gopkg.in/ldap.v2"
 )
 
-// Lists all Users in current domain
 func LDAP_QueryData(
 	conn *ldap.Conn,
 	baseDN string,
 	command string,
+	filter string,
+	name string,
 ) error {
-	result, err := conn.Search(ldap.NewSearchRequest(
-		baseDN,
-		ldap.ScopeWholeSubtree,
-		ldap.NeverDerefAliases,
-		0,
-		0,
-		false,
-		LDAPfilter("*", ldap_queries[command]),
-		[]string{},
-		nil,
-	))
-	if err != nil {
-		return fmt.Errorf("[+] Failed to search query. %s", err)
-	}
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{ldap_commands[command]})
@@ -38,28 +24,80 @@ func LDAP_QueryData(
 			WidthMax: 100,
 		},
 	})
-	for _, entry := range result.Entries {
-		//DEBUG LINE
-		// entry.Print()
-		// fmt.Println(strings.Repeat("*", 60))
-		t.AppendRows([]table.Row{
-			{"Distinguished Name (DN) : " + entry.DN},
-		})
-		for x, y := range ldap_variables[command] {
-			t.AppendRows([]table.Row{
-				{x + entry.GetAttributeValue(y)},
-			})
-		}
-		if LDAP_CommandChecker(command) {
-			LDAP_Resolver(entry, t)
-		}
-		if command == "user-logs" {
-			LDAP_TimeResolver(entry, t)
-		}
-		if command == "groups" {
-			LDAP_GroupResolver(t, conn, baseDN, entry.DN)
-		}
-		t.AppendSeparator()
+	if command == "users" && filter == "list" && name == "" {
+		LDAP_ListResolver(t, conn, baseDN, command)
+	}
+	if command == "users" && filter == "full-data" && name == "" {
+		LDAP_FullDataResolver(t, conn, baseDN, command)
+	}
+	if command == "users" && name != "" && filter != "membership" {
+		LDAP_SpecificFullDataResolver(t, conn, baseDN, name, command)
+	}
+	if command == "users" && name != "" && filter == "membership" {
+		LDAP_UserMembershipResolver(t, conn, baseDN, name, command)
+	}
+	if command == "computers" && filter == "list" && name == "" {
+		LDAP_ListResolver(t, conn, baseDN, command)
+	}
+	if command == "computers" && filter == "full-data" && name == "" {
+		LDAP_FullDataResolver(t, conn, baseDN, command)
+	}
+	if command == "computers" && name != "" {
+		LDAP_SpecificFullDataResolver(t, conn, baseDN, name, command)
+	}
+	if command == "groups" && filter == "list" && name == "" {
+		LDAP_ListResolver(t, conn, baseDN, command)
+	}
+	if command == "groups" && filter == "full-data" && name == "" {
+		LDAP_FullDataResolver(t, conn, baseDN, command)
+	}
+	if command == "groups" && name != "" && filter != "membership" {
+		LDAP_SpecificFullDataResolver(t, conn, baseDN, name, command)
+	}
+	if command == "groups" && filter == "membership" && name != "" {
+		LDAP_GroupResolver(t, conn, baseDN, name)
+	}
+	if command == "dc" {
+		LDAP_FullDataResolver(t, conn, baseDN, command)
+	}
+	if command == "domain-trust" {
+		LDAP_FullDataResolver(t, conn, baseDN, command)
+	}
+	if command == "spn" && filter == "list" && name == "" {
+		LDAP_ListResolver(t, conn, baseDN, command)
+	}
+	if command == "spn" && filter == "full-data" && name == "" {
+		LDAP_FullDataResolver(t, conn, baseDN, command)
+	}
+	if command == "spn" && name != "" {
+		LDAP_SpecificFullDataResolver(t, conn, baseDN, name, command)
+	}
+	if command == "never-loggedon" && filter == "list" && name == "" {
+		LDAP_ListResolver(t, conn, baseDN, command)
+	}
+	if command == "gpo" && name == "" {
+		LDAP_FullDataResolver(t, conn, baseDN, command)
+	}
+	if command == "ou" && name == "" {
+		LDAP_FullDataResolver(t, conn, baseDN, command)
+	}
+	if command == "ms-sql" && filter == "list" && name == "" {
+		LDAP_ListResolver(t, conn, baseDN, command)
+	}
+	if command == "ms-sql" && filter == "full-data" && name == "" {
+		LDAP_FullDataResolver(t, conn, baseDN, command)
+	}
+	if command == "ms-sql" && name != "" {
+		LDAP_SpecificFullDataResolver(t, conn, baseDN, name, command)
+	}
+	if command == "asreproast" {
+		LDAP_ListResolver(t, conn, baseDN, command)
+	}
+	if command == "unconstrained" {
+		LDAP_ListResolver(t, conn, baseDN, command)
+	}
+	if command == "admin-priv" {
+		LDAP_ListResolver(t, conn, baseDN, command)
 	}
 	t.Render()
 	return nil

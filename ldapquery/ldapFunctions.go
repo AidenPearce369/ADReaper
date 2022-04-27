@@ -54,3 +54,10 @@ func ParseTimeStamp(s string) (timestamp time.Time) {
 
 	return time.Unix(secs, nsecs).UTC()
 }
+
+func ParseSystemObject(s string) string {
+	if len(s) > 0 {
+		return "a"
+	}
+	return "a"
+}
